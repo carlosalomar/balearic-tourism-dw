@@ -1,0 +1,5 @@
+# No [theme] section on purpose: Streamlit then follows the viewer's light/dark
+# setting, and the charts pick the matching palette (see dashboard/charts.py).
+
+[browser]
+gatherUsageStats = false

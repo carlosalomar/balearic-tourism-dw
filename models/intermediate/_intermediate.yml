@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: int_hotel_demand__destination_leaves
+    description: Hotel demand by additive destination leaf (Rest of Mallorca and Unallocated derived).
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, destination_code, residence_code]
+  - name: int_hotel_performance__destination_leaves
+    description: Hotel supply, occupancy and revenue components by destination leaf.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, destination_code]
+  - name: int_tourist_arrivals__with_residual
+    description: FRONTUR tourists by island and market, suppressed cells collected in ABROAD_UNALLOCATED.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ibestat_island_code, origin_code]
+  - name: int_tourist_spending__with_residual
+    description: EGATUR spending and tourist days by island and market, suppressed cells collected in ABROAD_UNALLOCATED.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ibestat_island_code, egatur_market_code]

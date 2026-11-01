@@ -1,0 +1,5 @@
+island_key,island_code,island_name,ibestat_code,airport_code,airport_iata,airport_name
+1,MALLORCA,Mallorca,ES532,ES_LEPA,PMI,Palma de Mallorca
+2,MENORCA,Menorca,ES533,ES_LEMH,MAH,Menorca
+3,IBIZA_FORMENTERA,Ibiza-Formentera,ES531,ES_LEIB,IBZ,Ibiza
+-1,UNALLOCATED,Unallocated,,,,

@@ -1,0 +1,105 @@
+version: 2
+
+models:
+  - name: stg_ine__eoh_zone_demand
+    description: Travellers and overnight stays by INE tourist zone and residence. Suppressed cells are dropped.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ine_zone_code, residence_code]
+    columns:
+      - name: ine_zone_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [MALLORCA_ISLAND, PALMA_CALVIA, MENORCA, IBIZA_FORMENTERA]}
+      - name: residence_code
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: {values: [SPAIN, ABROAD]}
+      - name: travellers
+        data_tests: [not_null, non_negative]
+      - name: overnight_stays
+        data_tests: [not_null, non_negative]
+
+  - name: stg_ine__eoh_province_demand
+    description: Travellers and overnight stays for the Illes Balears province, always published.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, residence_code]
+    columns:
+      - name: travellers
+        data_tests: [not_null]
+      - name: overnight_stays
+        data_tests: [not_null]
+
+  - name: stg_ine__eoh_zone_supply
+    description: Hotel supply and occupancy rates (as fractions) by INE tourist zone.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ine_zone_code]
+    columns:
+      - name: ine_zone_code
+        data_tests: [not_null]
+      - name: bed_occupancy_rate
+        data_tests:
+          - between:
+              arguments: {min_value: 0, max_value: 1}
+      - name: room_occupancy_rate
+        data_tests:
+          - between:
+              arguments: {min_value: 0, max_value: 1}
+
+  - name: stg_ine__irsh_zone_prices
+    description: ADR and RevPAR in euros by INE tourist zone, from January 2021.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ine_zone_code]
+    columns:
+      - name: date_key
+        data_tests:
+          - between:
+              arguments: {min_value: 202101, max_value: 209912}
+      - name: adr
+        data_tests: [not_null, non_negative]
+      - name: revpar
+        data_tests: [not_null, non_negative]
+
+  - name: stg_eurostat__airport_passengers
+    description: Monthly passengers per airport, domestic and international flights.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, airport_code, flight_scope]
+    columns:
+      - name: airport_code
+        data_tests:
+          - accepted_values:
+              arguments: {values: [ES_LEPA, ES_LEIB, ES_LEMH]}
+      - name: passengers
+        data_tests: [not_null, non_negative]
+
+  - name: stg_ibestat__frontur_tourists
+    description: FRONTUR tourists by island, market code and month (null = suppressed cell).
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ibestat_island_code, ibestat_market_code]
+
+  - name: stg_ibestat__egatur_spending
+    description: EGATUR spending (euros), spending per tourist and per day, and derived tourist days.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ibestat_island_code, ibestat_market_code]
+
+  - name: stg_ibestat__egatur_nights
+    description: EGATUR tourist nights and average stay by island and Spain / abroad.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, ibestat_island_code, ibestat_market_code]

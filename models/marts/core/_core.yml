@@ -1,0 +1,237 @@
+version: 2
+
+models:
+  # ---------------------------------------------------------------- dimensions
+  - name: dim_date
+    description: Monthly calendar, conformed across every fact. Grain is one row per month.
+    columns:
+      - name: date_key
+        description: Month as an integer yyyymm.
+        data_tests: [unique, not_null]
+      - name: season
+        description: High (June-September), Shoulder (April, May, October) or Low.
+        data_tests:
+          - accepted_values:
+              arguments: {values: [High, Shoulder, Low]}
+      - name: days_in_month
+        data_tests:
+          - between:
+              arguments: {min_value: 28, max_value: 31}
+      - name: is_covid_period
+        description: March 2020 to May 2021, when hotel activity collapsed.
+
+  - name: dim_island
+    description: >
+      Islands, the shrunken rollup of dim_destination. Used directly by the
+      airport, FRONTUR and EGATUR facts. Includes an Unallocated member for
+      hotel demand INE did not publish by island.
+    columns:
+      - name: island_key
+        data_tests: [unique, not_null]
+      - name: island_name
+        data_tests: [unique, not_null]
+
+  - name: dim_destination
+    description: >
+      Hotel destinations, the additive leaves of the INE tourist zones:
+      Palma - Calvià, Rest of Mallorca (derived), Menorca, Ibiza-Formentera and
+      Unallocated (derived).
+    columns:
+      - name: destination_key
+        data_tests: [unique, not_null]
+      - name: destination_name
+        data_tests: [unique, not_null]
+      - name: is_derived
+        description: True when the leaf is computed by subtraction rather than published by INE.
+      - name: island_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_island'), field: island_key}
+
+  - name: dim_residence
+    description: Spain / abroad.
+    columns:
+      - name: residence_key
+        data_tests: [unique, not_null]
+
+  - name: dim_origin
+    description: >
+      FRONTUR source markets. "Spain" excludes Balearic residents (IBESTAT
+      definition), unlike the INE hotel survey. Abroad (unallocated) holds
+      cells suppressed by IBESTAT.
+    columns:
+      - name: origin_key
+        data_tests: [unique, not_null]
+      - name: egatur_market_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_egatur_market'), field: egatur_market_key}
+      - name: residence_key
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_residence'), field: residence_key}
+
+  - name: dim_egatur_market
+    description: EGATUR markets (Germany, United Kingdom, other abroad, Spain), a rollup of dim_origin.
+    columns:
+      - name: egatur_market_key
+        data_tests: [unique, not_null]
+
+  # --------------------------------------------------------------------- facts
+  - name: fact_hotel_demand
+    description: Hotel travellers and overnight stays. Grain is month x destination x residence. Fully additive.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, destination_key, residence_key]
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: destination_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_destination'), field: destination_key}
+      - name: residence_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_residence'), field: residence_key}
+      - name: travellers
+        data_tests: [not_null, non_negative]
+      - name: overnight_stays
+        data_tests: [not_null, non_negative]
+      - name: is_provisional
+        description: INE marks the latest months as provisional; they are revised later.
+
+  - name: fact_hotel_performance
+    description: >
+      Hotel supply, occupancy and revenue components. Grain is month x
+      destination. Flow measures are additive; stock measures (establishments,
+      bed places, rooms, staff) add across destinations only. No Unallocated
+      leaf: suppressed islands have no row.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, destination_key]
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: destination_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_destination'), field: destination_key}
+          - accepted_values:
+              arguments: {values: [1, 2, 3, 4], quote: false}
+      - name: establishments
+        data_tests: [not_null, non_negative]
+      - name: bed_places
+        data_tests: [not_null, non_negative]
+      - name: rooms
+        description: Published since January 2015.
+        data_tests: [non_negative]
+      - name: available_bed_nights
+        data_tests: [not_null, non_negative]
+      - name: occupied_bed_nights
+        data_tests: [not_null, non_negative]
+      - name: available_room_nights
+        data_tests: [non_negative]
+      - name: occupied_room_nights
+        data_tests: [non_negative]
+      - name: room_revenue_eur
+        description: RevPAR x available room-nights. IRSH survey, since January 2021.
+        data_tests: [non_negative]
+      - name: rooms_sold
+        description: Room revenue / ADR. IRSH survey, since January 2021.
+        data_tests: [non_negative]
+
+  - name: fact_airport_passengers
+    description: Airport passengers. Grain is month x island (one airport each) x flight scope.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, island_key, flight_scope]
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: island_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_island'), field: island_key}
+      - name: flight_scope
+        description: Degenerate dimension, DOMESTIC or INTERNATIONAL.
+        data_tests:
+          - accepted_values:
+              arguments: {values: [DOMESTIC, INTERNATIONAL]}
+      - name: passengers
+        description: Passengers carried (arrivals + departures).
+        data_tests: [not_null, non_negative]
+      - name: arriving_passengers
+        data_tests: [not_null, non_negative]
+
+  - name: fact_tourist_arrivals
+    description: FRONTUR tourists (all accommodation types). Grain is month x island x source market.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, island_key, origin_key]
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: island_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_island'), field: island_key}
+      - name: origin_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_origin'), field: origin_key}
+      - name: tourists
+        data_tests:
+          - not_null
+          - non_negative
+
+  - name: fact_tourist_spending
+    description: EGATUR tourist spending and tourist days. Grain is month x island x EGATUR market.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, island_key, egatur_market_key]
+    columns:
+      - name: date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_date'), field: date_key}
+      - name: island_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_island'), field: island_key}
+      - name: egatur_market_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_egatur_market'), field: egatur_market_key}
+      - name: spending_eur
+        data_tests: [not_null, non_negative]
+      - name: tourist_days
+        description: Spending / spending per person-day; matches EGATUR tourist nights within 1 %.
+        data_tests: [not_null, non_negative]

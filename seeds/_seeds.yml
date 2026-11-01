@@ -1,0 +1,23 @@
+version: 2
+
+seeds:
+  - name: island
+    description: Islands and their codes in each source (IBESTAT territory, Eurostat airport).
+    config:
+      column_types: {island_key: integer, ibestat_code: varchar, airport_code: varchar, airport_iata: varchar, airport_name: varchar}
+  - name: destination
+    description: Hotel destinations, the additive leaves of the INE tourist zones.
+    config:
+      column_types: {destination_key: integer, island_key: integer, is_derived: boolean, ine_zone_code: varchar}
+  - name: residence
+    description: Spain / abroad, the only residence split published by the INE hotel survey.
+    config:
+      column_types: {residence_key: integer}
+  - name: origin
+    description: FRONTUR source markets (country of residence) for the Balearic Islands.
+    config:
+      column_types: {origin_key: integer, egatur_market_key: integer, residence_key: integer, ibestat_code: varchar}
+  - name: egatur_market
+    description: The coarser market split published by EGATUR (spending).
+    config:
+      column_types: {egatur_market_key: integer, residence_key: integer, ibestat_code: varchar}

@@ -1,0 +1,9 @@
+pandas>=2.2
+requests>=2.32
+duckdb>=1.1
+dbt-duckdb>=1.9
+streamlit>=1.40
+plotly>=5.24
+matplotlib>=3.9
+openpyxl>=3.1
+jupyter>=1.1

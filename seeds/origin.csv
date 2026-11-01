@@ -1,0 +1,10 @@
+origin_key,origin_code,market_name,ibestat_code,egatur_market_key,residence_key
+1,DE,Germany,DE,1,2
+2,GB,United Kingdom,GB,2,2
+3,FR,France,FR,3,2
+4,IT,Italy,IT,3,2
+5,NORDICS,Nordic countries,5100_L1,3,2
+6,BENELUX,"Belgium, Luxembourg and Netherlands",5100_L2,3,2
+7,OTHER_ABROAD,Other abroad,5000_XES_O,3,2
+8,ES,Spain (excl. Balearic Islands),ES_XIB,4,1
+-2,ABROAD_UNALLOCATED,Abroad (unallocated),,-2,2

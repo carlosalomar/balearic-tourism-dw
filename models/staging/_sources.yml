@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Source files flattened by `python -m etl.load_raw`, labels still in Spanish.
+    schema: raw
+    tables:
+      - name: ine_eoh_zone_demand
+        description: INE EOH table 2039. Travellers and overnight stays by tourist zone and residence.
+      - name: ine_eoh_zone_supply
+        description: INE EOH table 2013. Open establishments, rooms, bed places, occupancy rates and staff by tourist zone.
+      - name: ine_eoh_province_demand
+        description: INE EOH table 2074. Travellers and overnight stays for the Illes Balears province.
+      - name: ine_irsh_zone_adr
+        description: INE IRSH table 46297. Average daily rate (ADR) by tourist zone.
+      - name: ine_irsh_zone_revpar
+        description: INE IRSH table 46300. Revenue per available room (RevPAR) by tourist zone.
+      - name: eurostat_avia_paoa
+        description: Eurostat avia_paoa. Monthly passengers by reporting airport (figures reported by AENA).
+      - name: ibestat_frontur_tourists
+        description: IBESTAT FRONTUR 000058A_000002. Tourists by island and country of residence.
+      - name: ibestat_egatur_spending
+        description: IBESTAT EGATUR 000059A_000007. Tourist spending by island and residence.
+      - name: ibestat_egatur_nights
+        description: IBESTAT EGATUR 000059A_000011. Tourist nights and average stay by island and Spain / abroad.

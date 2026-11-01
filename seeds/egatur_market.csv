@@ -1,0 +1,6 @@
+egatur_market_key,egatur_market_code,egatur_market_name,ibestat_code,residence_key
+1,DE,Germany,DE,2
+2,GB,United Kingdom,GB,2
+3,OTHER_ABROAD,Other abroad,5000_XES_O,2
+4,ES,Spain (excl. Balearic Islands),ES_XIB,1
+-2,ABROAD_UNALLOCATED,Abroad (unallocated),,2

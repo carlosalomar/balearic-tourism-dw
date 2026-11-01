@@ -1,0 +1,6 @@
+destination_key,destination_code,destination_name,ine_zone_code,is_derived,island_key,description
+1,PALMA_CALVIA,Palma - Calvià,PALMA_CALVIA,false,1,INE tourist zone Palma - Calvià (sub-zone of Mallorca)
+2,REST_OF_MALLORCA,Rest of Mallorca,,true,1,Isla de Mallorca minus Palma - Calvià
+3,MENORCA,Menorca,MENORCA,false,2,INE tourist zone Isla de Menorca
+4,IBIZA_FORMENTERA,Ibiza-Formentera,IBIZA_FORMENTERA,false,3,INE tourist zone Islas de Ibiza-Formentera
+-1,UNALLOCATED,Unallocated,,true,-1,Province total minus published islands (zones suppressed by INE in that month)

@@ -1,0 +1,6 @@
+# Dashboard-only dependencies (used by Streamlit Community Cloud).
+# The full pipeline (ETL + dbt) uses the requirements.txt in the repo root.
+streamlit>=1.46
+plotly>=5.24
+pandas>=2.2
+pyarrow>=15

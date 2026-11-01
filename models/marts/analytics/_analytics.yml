@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: mart_hotel_kpis
+    description: >
+      Occupancy, ADR, RevPAR and average stay per destination and month,
+      recomputed from additive components. To aggregate, sum the components
+      in the core facts and divide again; never average these rates.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, destination_name]
+    columns:
+      - name: bed_occupancy_rate
+        data_tests:
+          - between:
+              arguments: {min_value: 0, max_value: 1}
+      - name: room_occupancy_rate
+        data_tests:
+          - between:
+              arguments: {min_value: 0, max_value: 1}
+      - name: adr_eur
+        description: Average daily rate, room revenue / rooms sold.
+      - name: revpar_eur
+        description: Revenue per available room, room revenue / available room-nights.
+
+  - name: mart_island_monthly
+    description: >
+      Drill-across of the five facts at the shared island x month grain, the
+      table behind the dashboard. Each fact is aggregated before joining.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [date_key, island_name]
