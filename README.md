@@ -6,7 +6,9 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B?logo=streamlit&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-<!-- Live demo: add the Streamlit Community Cloud URL here once deployed -->
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://balearic-tourism-dw-bf4ndzgvu54c4x9wvwhof3.streamlit.app/)
+
+**Live demo:** [balearic-tourism-dw-bf4ndzgvu54c4x9wvwhof3.streamlit.app](https://balearic-tourism-dw-bf4ndzgvu54c4x9wvwhof3.streamlit.app/)
 
 **Business question:** how do hotel demand, occupancy and prices behave in the
 Balearic Islands by island, season and the tourist's country of origin?
@@ -94,6 +96,9 @@ reads the small Parquet snapshot in `dashboard/data/`. That also means the dashb
 runs on its own: `pip install -r dashboard/requirements.txt` and step 5 are enough.
 
 ### Deploy to Streamlit Community Cloud
+
+The live version runs at [https://balearic-tourism-dw-bf4ndzgvu54c4x9wvwhof3.streamlit.app/](https://balearic-tourism-dw-bf4ndzgvu54c4x9wvwhof3.streamlit.app/). To deploy your own copy:
+
 
 1. Push the repository to GitHub (with `dashboard/data/*.parquet` included).
 2. On [share.streamlit.io](https://share.streamlit.io), choose **Create app**, pick the
